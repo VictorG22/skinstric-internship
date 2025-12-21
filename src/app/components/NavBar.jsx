@@ -13,7 +13,7 @@ export default function NavBar() {
             <Image width={4} height={17} className='brightness-0 opacity-50' src={'/right-bracket.png'} alt='left bracket'/>
         </div>
         </div>
-        <div className='text-[10px] py-2 px-4 bg-[#1A1B1C] text-white'>ENTER CODE</div>
+        <div className='cursor-default text-[10px] py-2 px-4 bg-[#1A1B1C] text-white'>ENTER CODE</div>
       
     </div>
   )
