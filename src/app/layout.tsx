@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import NavBar from './components/NavBar'
+import NavBar from '../components/NavBar'
 import "./globals.css";
 
 
@@ -29,7 +29,10 @@ export default function RootLayout({
         className={`${poppins.variable} antialiased relative overflow-hidden tracking-tighter text-[#1a1b1c]`}
       >
         <NavBar />
-        {children}
+        <section className="mt-18.75 min-h-[calc(100vh-75px)]">
+
+    {children}
+    </section>
       </body>
     </html>
   );
