@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import NavBar from '../components/NavBar'
+import NavBar from "../components/NavBar";
 import "./globals.css";
-
-
+import { AnalysisProvider } from "@/context/AnalysisContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
 });
-
-
 
 export const metadata: Metadata = {
   title: "Skinstric",
@@ -28,11 +25,10 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} antialiased relative overflow-hidden tracking-tighter text-[#1a1b1c]`}
       >
+        <AnalysisProvider>
         <NavBar />
-        <section className="mt-18.75 min-h-[calc(100vh-75px)]">
-
-    {children}
-    </section>
+          {children}
+        </AnalysisProvider>
       </body>
     </html>
   );

@@ -53,7 +53,7 @@ export default function Home() {
             width={40}
             height={40}
             src={"/right-btn.png"}
-            alt="left button"
+            alt="right button"
             className="transition duration-300 group-hover:scale-109"
           />
         </div>

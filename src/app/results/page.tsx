@@ -1,4 +1,5 @@
 "use client";
+import { useAnalysis } from "@/context/AnalysisContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,11 +11,12 @@ export default function ResultsPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
-  const [base64, setBase64] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasUploaded, setHasUploaded] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  
+  const { setAnalysis } = useAnalysis(); 
   const router = useRouter();
 
   const handleIconClick = (): void => {
@@ -25,31 +27,34 @@ export default function ResultsPage() {
     try {
       setIsLoading(true);
 
-      console.log(`{ Image: ${base64.slice(0,50)}}`)
-
-      const res = await fetch("https://us-central1-frontend-simplified.cloudfunctions.net/skinstricPhaseTwo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          image: base64,
-        }),
-      });
+      const res = await fetch(
+        "https://us-central1-frontend-simplified.cloudfunctions.net/skinstricPhaseTwo",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image: base64,
+          }),
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Upload failed");
       }
 
-      const data = await res.json();
-        console.log("POST success", data);
+      const { data } = await res.json();
+      setAnalysis(data);
 
-      // Optional: read response if needed
-      // const data = await res.json();
+      if (typeof window !== "undefined") {
+        alert(data?.message ?? "Upload successfully.");
+        router.push("/select");
+        }
 
-      // Redirect on success
-      // router.push("/select");
-    } catch (error) {
+
+    } catch (err) {
+      console.error(err);
       setError("Failed to upload image.");
       setIsLoading(false);
     }
@@ -74,7 +79,7 @@ export default function ResultsPage() {
     //size limit 20MB
     const MAX_SIZE_MB = 20;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError("Image must be under 2MB.");
+      setError("Image must be under 20MB.");
       event.target.value = "";
       setPreviewSrc(null);
       return;
@@ -88,7 +93,6 @@ export default function ResultsPage() {
       setPreviewSrc(reader.result);
 
       const base64String = reader.result.split(",")[1];
-      setBase64(base64String);
 
       // Hide upload UI
       setHasUploaded(true);
@@ -100,7 +104,7 @@ export default function ResultsPage() {
     reader.readAsDataURL(file);
   };
   return (
-    <div className="relative min-h-[calc(100vh-75px)] w-full flex items-center justify-center bg-white text-center">
+    <div className="relative mt-18.75 min-h-[calc(100vh-75px)] w-full flex items-center justify-center bg-white text-center">
       <p className="absolute top-5 left-10 uppercase font-bold text-sm">
         to start analysis
       </p>
@@ -149,7 +153,7 @@ export default function ResultsPage() {
             <Image
               width={50}
               height={50}
-              alt="back button"
+              alt="left button"
               src={"/left-btn.png"}
               className="group-hover:scale-109 transition duration-200 "
             />
@@ -158,9 +162,30 @@ export default function ResultsPage() {
         </>
       )}
       {hasUploaded && isLoading && (
-        <div className="flex items-center justify-center w-full h-full">
-          {/* PLACEHOLDER — PUT YOUR OWN CODE HERE */}
-          <div className="text-6xl font-bold">Processing image...</div>
+        <div className="relative flex flex-col items-center justify-center w-full h-full">
+            <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab] animate-[spin_15s_linear_infinite]" />
+              <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab77] animate-[spin_10s_linear_infinite]" />
+              <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab33] animate-[spin_5s_linear_infinite]" />
+          <div className="text-lg font-bold">Preparing your analysis...</div>
+          <div className="flex gap-4 mt-4">
+                        <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0s" }}
+              />
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0.12s" }}
+              />
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0.24s" }}
+              />
+          </div>
+        </div>
+      )}
+      {error && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-red-100 text-red-800 border border-red-200 px-4 py-2 rounded">
+          {error}
         </div>
       )}
       <div className="absolute top-0 right-8 flex flex-col items-start">

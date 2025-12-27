@@ -10,7 +10,7 @@ export default function NavBar() {
         <div className='flex itemx-center text-opacity-70 text-[#1A1B1C83] '>
             <Image width={4} className='brightness-0 opacity-50' height={17} src={'/left-bracket.png'} alt='left bracket'/>
         <div className='px-2 rounded-sm text'>INTRO</div>
-            <Image width={4} height={17} className='brightness-0 opacity-50' src={'/right-bracket.png'} alt='left bracket'/>
+            <Image width={4} height={17} className='brightness-0 opacity-50' src={'/right-bracket.png'} alt='right bracket'/>
         </div>
         </div>
         <div className='cursor-default text-[10px] py-2 px-4 bg-[#1A1B1C] text-white'>ENTER CODE</div>

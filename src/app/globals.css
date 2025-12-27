@@ -35,5 +35,5 @@
 }
 
 .animate-loadingBounce {
-    animation: loadingBounce 900ms ease-in-out infinite
+    animation: loadingBounce 900ms ease-in-out infinite;
 }
