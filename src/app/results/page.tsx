@@ -153,7 +153,7 @@ export default function ResultsPage() {
             <Image
               width={50}
               height={50}
-              alt="back button"
+              alt="left button"
               src={"/left-btn.png"}
               className="group-hover:scale-109 transition duration-200 "
             />
