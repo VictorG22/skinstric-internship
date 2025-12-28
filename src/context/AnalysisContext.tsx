@@ -1,5 +1,5 @@
-'use client'
-import { createContext, useContext, useState, ReactNode } from "react";
+'use client';
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 type RaceData = Record<string, number>;
 type AgeData = Record<string, number>;
@@ -19,7 +19,21 @@ type AnalysisContextType = {
 const AnalysisContext = createContext<AnalysisContextType | undefined>(undefined);
 
 export const AnalysisProvider = ({ children }: { children: ReactNode }) => {
-  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [analysis, setAnalysisState] = useState<AnalysisData | null>(null);
+
+  // Load from sessionStorage on mount
+  useEffect(() => {
+    const stored = sessionStorage.getItem("analysis");
+    if (stored) {
+      setAnalysisState(JSON.parse(stored));
+    }
+  }, []);
+
+  // Wrap setAnalysis to also save to sessionStorage
+  const setAnalysis = (data: AnalysisData) => {
+    setAnalysisState(data);
+    sessionStorage.setItem("analysis", JSON.stringify(data));
+  };
 
   return (
     <AnalysisContext.Provider value={{ analysis, setAnalysis }}>

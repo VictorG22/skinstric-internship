@@ -110,7 +110,7 @@ export default function ResultsPage() {
       </p>
       {!hasUploaded && (
         <>
-          <div className="w-full flex gap-0 justify-center items-center md:gap-75 xl:gap-200">
+          <div className="w-[50%] mx-auto flex gap-0 justify-between items-center ">
             <div className="relative">
               <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab] animate-[spin_90s_linear_infinite]" />
               <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab77] animate-[spin_70s_linear_infinite]" />
