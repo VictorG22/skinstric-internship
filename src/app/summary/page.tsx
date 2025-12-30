@@ -104,7 +104,7 @@ export default function SummaryPage() {
                     </>
                   ) : (
                     <>
-                      <p className="capitalize text-lg font-bold">{category}</p>
+                      <p className="capitalize text-lg font-bold">No Selection</p>
                       <p className="font-bold text-xl uppercase">{category}</p>
                     </>
                   )}
