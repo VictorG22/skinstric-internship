@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAnalysis } from "@/context/AnalysisContext";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,7 +30,6 @@ const sortCategoryEntries = (
   if (category === "age") {
     return entries.sort(([a], [b]) => {
       const getStart = (range: string) => Number(range.split("-")[0]);
-
       return getStart(a) - getStart(b);
     });
   }
@@ -41,28 +40,35 @@ const sortCategoryEntries = (
 export default function SummaryPage() {
   const { analysis } = useAnalysis();
 
-  // Extract categories safely
   const categories: AnalysisCategory[] = analysis
     ? (Object.keys(analysis) as AnalysisCategory[])
     : [];
 
-  // Initialize selected options per category
-  const [selectedOptions, setSelectedOptions] = useState(() => {
-    const initial: { [category: string]: { label: string; percentage: number } } = {};
-    if (analysis) {
-      for (const category of categories) {
-        const highest = getDefaultSelection(analysis[category] ?? {});
-        if (highest) initial[category] = highest;
-      }
-    }
-    return initial;
-  });
+  // Initialize empty selected options
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [category: string]: { label: string; percentage: number };
+  }>({});
 
   const [activeCategory, setActiveCategory] = useState<AnalysisCategory>(
-    categories[0] ?? ("race" as AnalysisCategory) // fallback if empty
+    categories[0] ?? ("race" as AnalysisCategory)
   );
 
-  if (!analysis) return <p>Loading...</p>;
+  // Set initial selections once analysis is available
+  useEffect(() => {
+    if (!analysis) return;
+
+    const initial: { [category: string]: { label: string; percentage: number } } = {};
+    for (const category of categories) {
+      const highest = getDefaultSelection(analysis[category] ?? {});
+      if (highest) initial[category] = highest;
+    }
+
+    setSelectedOptions(initial);
+  }, [analysis]);
+
+    if (!analysis || Object.keys(selectedOptions).length === 0) {
+    return <p>Loading...</p>;
+  }
 
   const currentSelection = selectedOptions[activeCategory];
   const categoryData = analysis[activeCategory] ?? {};
@@ -139,7 +145,7 @@ export default function SummaryPage() {
                     <ConfidenceOption
                       key={key}
                       label={key}
-                      percentage={percent}
+                      percentage={Math.floor(percent * 100)}
                       onClick={() =>
                         setSelectedOptions((prev) => ({
                           ...prev,

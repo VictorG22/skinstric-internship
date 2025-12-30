@@ -19,7 +19,7 @@ export default function ConfidenceOption({
         </div>
         <p className="mr-2 capitalize">{label}</p>
       </div>
-      <p>{Math.floor(percentage * 100)}%</p>
+      <p>{percentage}%</p>
     </div>
   );
 }
