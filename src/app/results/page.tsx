@@ -111,7 +111,9 @@ export default function ResultsPage() {
       {!hasUploaded && (
         <>
           <div className="w-[50%] mx-auto flex gap-0 justify-between items-center ">
-            <div className="relative">
+            <Link
+            href={'/camera'}
+            className="relative">
               <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab] animate-[spin_90s_linear_infinite]" />
               <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab77] animate-[spin_70s_linear_infinite]" />
               <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab33] animate-[spin_50s_linear_infinite]" />
@@ -120,7 +122,7 @@ export default function ResultsPage() {
                   <SiLens className="absolute top-1/2 left-1/2 w-[145%] h-[145%] object-cover -translate-x-1/2 -translate-y-1/2" />
                 </div>
               </div>
-            </div>
+            </Link>
 
             <div className="relative">
               <div className="absolute rotate-45 w-75 h-75 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-dotted border-[#a0a4ab] animate-[spin_90s_linear_infinite]" />

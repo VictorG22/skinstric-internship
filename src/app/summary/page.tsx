@@ -1,120 +1,12 @@
 "use client";
-// import ConfidenceOption from "@/components/ConfidenceOption";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAnalysis } from "@/context/AnalysisContext";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-
-interface CircleProgressProps {
-  percentage: number; // 0-100
-  size?: number; // diameter in px
-  strokeWidth?: number;
-}
-
-export function CircleProgress({
-  percentage,
-  size = 120,
-  strokeWidth = 12,
-}: CircleProgressProps) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-
-  // Animate the percentage change
-  const [animatedPercentage, setAnimatedPercentage] = useState(0);
-
-  useEffect(() => {
-    // Smoothly animate from previous percentage to new one
-    const animation = setTimeout(() => setAnimatedPercentage(percentage), 50);
-    return () => clearTimeout(animation);
-  }, [percentage]);
-
-  const offset = circumference - (animatedPercentage / 100) * circumference;
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size}>
-        {/* Track */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="#9CA3AF"
-          strokeWidth={strokeWidth}
-          fill="transparent"
-        />
-        {/* Progress */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="#000000"
-          strokeWidth={strokeWidth}
-          fill="transparent"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ transition: "stroke-dashoffset 0.5s ease-in-out" }} // animation
-        />
-      </svg>
-      {/* Percentage text */}
-      <span
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl font-semibold"
-        style={{ fontSize: size * 0.1 }}
-      >
-        {animatedPercentage}%
-      </span>
-    </div>
-  );
-}
-
-export function ConfidenceOption({
-  label,
-  percentage,
-  onClick,
-}: {
-  label: string;
-  percentage: number;
-  onClick: () => void;
-}) {
-  return (
-    <div
-      onClick={onClick}
-      className="flex items-center justify-between h-12 hover:bg-[#e1e1e2] px-4 cursor-pointer"
-    >
-      <div className="relative flex items-center gap-2">
-        <div className="relative w-3 h-3">
-          <div className="absolute inset-px rotate-45 border border-black" />
-        </div>
-        <p className="mr-2 capitalize">{label}</p>
-      </div>
-      <p>{Math.floor(percentage * 100)}%</p>
-    </div>
-  );
-}
-
-export function SelectedConfidenceOption({
-  label,
-  percentage,
-}: {
-  label: string;
-  percentage: number;
-}) {
-  return (
-    <div className="flex items-center justify-between h-12 bg-black px-4 cursor-pointer">
-      <div className="relative flex items-center gap-2">
-        <div className="relative w-3 h-3">
-          <div className="absolute inset-0 bg-white rotate-45 border border-black" />
-          <div className="absolute inset-0.75 bg-white rotate-45 border border-black" />
-        </div>
-        <p className="mr-2 text-white font-semibold capitalize">{label}</p>
-      </div>
-      <p className="text-white font-semibold">{percentage}%</p>
-    </div>
-  );
-}
+import CircleProgress from "@/components/summary/CircleProgress";
+import SelectedConfidenceOption from "@/components/summary/SelectedConfidenceOption";
+import ConfidenceOption from "@/components/summary/ConfidenceOption";
 
 const getDefaultSelection = (data: Record<string, number>) => {
   const entries = Object.entries(data);
@@ -129,31 +21,51 @@ const getDefaultSelection = (data: Record<string, number>) => {
 
 type AnalysisCategory = "race" | "age" | "gender";
 
+const sortCategoryEntries = (
+  category: AnalysisCategory,
+  data: Record<string, number>
+) => {
+  const entries = Object.entries(data);
+
+  if (category === "age") {
+    return entries.sort(([a], [b]) => {
+      const getStart = (range: string) => Number(range.split("-")[0]);
+
+      return getStart(a) - getStart(b);
+    });
+  }
+
+  return entries;
+};
+
 export default function SummaryPage() {
   const { analysis } = useAnalysis();
 
+  // Extract categories safely
+  const categories: AnalysisCategory[] = analysis
+    ? (Object.keys(analysis) as AnalysisCategory[])
+    : [];
+
+  // Initialize selected options per category
+  const [selectedOptions, setSelectedOptions] = useState(() => {
+    const initial: { [category: string]: { label: string; percentage: number } } = {};
+    if (analysis) {
+      for (const category of categories) {
+        const highest = getDefaultSelection(analysis[category] ?? {});
+        if (highest) initial[category] = highest;
+      }
+    }
+    return initial;
+  });
+
+  const [activeCategory, setActiveCategory] = useState<AnalysisCategory>(
+    categories[0] ?? ("race" as AnalysisCategory) // fallback if empty
+  );
+
   if (!analysis) return <p>Loading...</p>;
 
-  const categories = Object.keys(analysis) as AnalysisCategory[];
-
-  // Initialize selected options per category to the highest-value option
-  const initialSelectedOptions: {
-    [category: string]: { label: string; percentage: number };
-  } = {};
-  for (const category of categories) {
-    const highest = getDefaultSelection(analysis[category]);
-    if (highest) initialSelectedOptions[category] = highest;
-  }
-
-  const [selectedOptions, setSelectedOptions] = useState(
-    initialSelectedOptions
-  );
-  const [activeCategory, setActiveCategory] = useState<AnalysisCategory>(
-    categories[0]
-  );
-
   const currentSelection = selectedOptions[activeCategory];
-  const categoryData = analysis[activeCategory];
+  const categoryData = analysis[activeCategory] ?? {};
 
   return (
     <div className="relative w-full h-[calc(100vh-75px)] mt-18.75">
@@ -168,7 +80,7 @@ export default function SummaryPage() {
           {/* Left category selectors */}
           <div className="flex flex-col gap-y-2">
             {categories.map((category) => {
-              const selection = selectedOptions[category]; // get selection for this category
+              const selection = selectedOptions[category];
               return (
                 <div
                   key={category}
@@ -215,29 +127,30 @@ export default function SummaryPage() {
             </div>
 
             {categoryData &&
-              Object.entries(categoryData).map(([key, percent]) =>
-                currentSelection?.label === key ? (
-                  <SelectedConfidenceOption
-                    key={key}
-                    label={key}
-                    percentage={Math.floor(percent * 100)}
-                  />
-                ) : (
-                  <ConfidenceOption
-                    key={key}
-                    label={key}
-                    percentage={percent}
-                    onClick={() =>
-                      setSelectedOptions((prev) => ({
-                        ...prev,
-                        [activeCategory]: {
-                          label: key,
-                          percentage: Math.floor(percent * 100),
-                        },
-                      }))
-                    }
-                  />
-                )
+              sortCategoryEntries(activeCategory, categoryData).map(
+                ([key, percent]) =>
+                  currentSelection?.label === key ? (
+                    <SelectedConfidenceOption
+                      key={key}
+                      label={key}
+                      percentage={Math.floor(percent * 100)}
+                    />
+                  ) : (
+                    <ConfidenceOption
+                      key={key}
+                      label={key}
+                      percentage={percent}
+                      onClick={() =>
+                        setSelectedOptions((prev) => ({
+                          ...prev,
+                          [activeCategory]: {
+                            label: key,
+                            percentage: Math.floor(percent * 100),
+                          },
+                        }))
+                      }
+                    />
+                  )
               )}
           </div>
         </div>
@@ -260,4 +173,3 @@ export default function SummaryPage() {
     </div>
   );
 }
-

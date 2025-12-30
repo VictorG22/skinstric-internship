@@ -22,12 +22,18 @@ export const AnalysisProvider = ({ children }: { children: ReactNode }) => {
   const [analysis, setAnalysisState] = useState<AnalysisData | null>(null);
 
   // Load from sessionStorage on mount
-  useEffect(() => {
-    const stored = sessionStorage.getItem("analysis");
-    if (stored) {
+useEffect(() => {
+  const stored = sessionStorage.getItem("analysis");
+  if (stored) {
+    try {
       setAnalysisState(JSON.parse(stored));
+    } catch (error) {
+      console.error("Failed to parse sessionStorage 'analysis':", error);
+      // Optionally, clear corrupted data
+      sessionStorage.removeItem("analysis");
     }
-  }, []);
+  }
+}, []);
 
   // Wrap setAnalysis to also save to sessionStorage
   const setAnalysis = (data: AnalysisData) => {
