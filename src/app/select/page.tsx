@@ -11,7 +11,7 @@ export default function SelectPage() {
   >(null);
 
   return (
-    <div className="flex mt-18.75 min-h-[calc(100vh-75px)] justify-center items-start h-screen w-full">
+    <div className="flex mt-18.75 min-h-[calc(100vh-75px)] justify-center items-start w-full">
       <div className="absolute top-0 left-10 uppercase text-sm">
         <p className="font-bold mb-1">a.i. analysis</p>
         <p>
