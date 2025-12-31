@@ -45,9 +45,6 @@ export default function CameraPage() {
       {!error && (
         <CameraCapture
           onError={setError}
-          onCapture={(img) => {
-            console.log("Captured:", img);
-          }}
         />
       )}
     </>
