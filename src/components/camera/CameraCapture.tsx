@@ -57,19 +57,13 @@ export default function CameraCapture({
     setCapturedImage(imageData); // store for preview
   };
 
-const confirmCapture = async () => {
-  if (!capturedImage) return;
+  const confirmCapture = async () => {
+    if (!capturedImage) return;
 
-  const base64String = capturedImage.split(",")[1];
+    const base64String = capturedImage.split(",")[1];
 
-  try {
     await uploadImage(base64String);
-
-  } catch (err) {
-    console.error("Upload failed:", err);
-  }
-};
-
+  };
 
   const retakeCapture = () => {
     setCapturedImage(null);
@@ -117,7 +111,7 @@ const confirmCapture = async () => {
       )}
 
       {/* Confirm / Retake buttons (only when an image is captured) */}
-      {capturedImage && !isLoading &&  (
+      {capturedImage && !isLoading && (
         <>
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 uppercase text-center text-white bg-[#0000004d] px-2 rounded-lg">
             great shot!
@@ -169,29 +163,27 @@ const confirmCapture = async () => {
       {isLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-20">
           <div className="flex flex-col items-center gap-y-10 bg-[#FFFFFF99] px-20 py-10 rounded-lg">
-          <p className="text-gray-700 font-bold uppercase">
-            Analyzing Image
-          </p>
-          <div
-            className="flex items-center gap-2"
-            role="status"
-            aria-live="polite"
-            aria-label="Processing"
-          >
-            <span
-              className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
-              style={{ animationDelay: "0s" }}
+            <p className="text-gray-700 font-bold uppercase">Analyzing Image</p>
+            <div
+              className="flex items-center gap-2"
+              role="status"
+              aria-live="polite"
+              aria-label="Processing"
+            >
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0s" }}
               />
-            <span
-              className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
-              style={{ animationDelay: "0.12s" }}
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0.12s" }}
               />
-            <span
-              className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
-              style={{ animationDelay: "0.24s" }}
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0.24s" }}
               />
+            </div>
           </div>
-              </div>
         </div>
       )}
 
@@ -201,10 +193,7 @@ const confirmCapture = async () => {
         </div>
       )}
 
-      { !isLoading &&
-        <BackButton prevLink="results" />
-      }
-
+      {!isLoading && <BackButton prevLink="results" />}
 
       <canvas ref={canvasRef} className="hidden" />
     </div>
