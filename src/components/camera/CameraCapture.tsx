@@ -62,12 +62,8 @@ const confirmCapture = async () => {
 
   const base64String = capturedImage.split(",")[1];
 
-  try {
     await uploadImage(base64String);
 
-  } catch (err) {
-    console.error("Upload failed:", err);
-  }
 };
 
 
