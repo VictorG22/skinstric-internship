@@ -1,5 +1,6 @@
 "use client";
 import { useAnalysis } from "@/context/AnalysisContext";
+import { useUploadImage } from "../hooks/useUploadImage";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,100 +12,42 @@ export default function ResultsPage() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [hasUploaded, setHasUploaded] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   
-  const { setAnalysis } = useAnalysis(); 
-  const router = useRouter();
+  const { isLoading, error, uploadImage, validateFile } = useUploadImage();
+ 
 
   const handleIconClick = (): void => {
     fileInputRef.current?.click();
   };
 
-  const uploadImage = async (base64: string): Promise<void> => {
-    try {
-      setIsLoading(true);
 
-      const res = await fetch(
-        "https://us-central1-frontend-simplified.cloudfunctions.net/skinstricPhaseTwo",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            image: base64,
-          }),
-        }
-      );
+ 
+const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
 
-      if (!res.ok) {
-        throw new Error("Upload failed");
-      }
+  setPreviewSrc(null);
 
-      const { data } = await res.json();
-      setAnalysis(data);
+  // Validate file using the hook
+  if (!validateFile(file)) return;
 
-      if (typeof window !== "undefined") {
-        alert(data?.message ?? "Upload successfully.");
-        router.push("/select");
-        }
+  const reader = new FileReader();
+  reader.onload = async () => {
+    if (typeof reader.result !== "string") return;
 
-
-    } catch (err) {
-      console.error(err);
-      setError("Failed to upload image.");
-      setIsLoading(false);
-    }
+    setPreviewSrc(reader.result);
+    const base64String = reader.result.split(",")[1];
+    setHasUploaded(true);
+    await uploadImage(base64String);
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const file = event.target.files?.[0];
+  reader.readAsDataURL(file);
+};
 
-    if (!file) return;
-
-    // Reset previous state
-    setError(null);
-
-    // Enforce only image files
-    if (!file.type.startsWith("image/")) {
-      setError("Please upload a valid image file.");
-      event.target.value = "";
-      setPreviewSrc(null);
-      return;
-    }
-
-    //size limit 20MB
-    const MAX_SIZE_MB = 20;
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError("Image must be under 20MB.");
-      event.target.value = "";
-      setPreviewSrc(null);
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = async () => {
-      if (typeof reader.result !== "string") return;
-
-      setPreviewSrc(reader.result);
-
-      const base64String = reader.result.split(",")[1];
-
-      // Hide upload UI
-      setHasUploaded(true);
-
-      // Start upload + loading
-      await uploadImage(base64String);
-    };
-
-    reader.readAsDataURL(file);
-  };
   return (
-    <div className="relative mt-18.75 min-h-[calc(100vh-75px)] w-full flex items-center justify-center bg-white text-center">
+    <div className="relative min-h-[calc(100vh-75px)] w-full flex items-center justify-center bg-white text-center">
       <p className="absolute top-5 left-10 uppercase font-bold text-sm">
         to start analysis
       </p>

@@ -74,7 +74,7 @@ export default function SummaryPage() {
   const categoryData = analysis[activeCategory] ?? {};
 
   return (
-    <div className="relative w-full h-[calc(100vh-75px)] mt-18.75">
+    <div className="relative w-full h-[calc(100vh-75px)]">
       <div className="flex-1 mx-5 px-4 relative w-full max-h-full overflow-y-auto">
         <div className="mt-2 mb-15 flex flex-col justify-center gap-y-1 uppercase">
           <p className="font-bold">a.i. analysis</p>
