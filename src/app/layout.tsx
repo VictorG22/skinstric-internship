@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} antialiased relative overflow-hidden tracking-tighter text-[#1a1b1c]`}
+        className={`${poppins.variable} antialiased relative overflow-hidden tracking-tighter text-[#1a1b1c] flex flex-col h-screen`}
       >
         <AnalysisProvider>
         <NavBar />

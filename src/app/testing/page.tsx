@@ -104,7 +104,7 @@ export default function TestingPage() {
   }
 
   return (
-    <div className="relative my-18.75 min-h-[calc(100vh-150px)] flex flex-col items-center justify-center bg-white text-center">
+    <div className="relative mb-18.75 min-h-[calc(100vh-150px)] flex flex-col items-center justify-center bg-white text-center">
       <div className="absolute top-0 left-5 uppercase font-bold text-xs">
         to start analysis
       </div>

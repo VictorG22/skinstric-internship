@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 export default function SelectPage() {
   const [active, setActive] = useState<
@@ -11,7 +10,7 @@ export default function SelectPage() {
   >(null);
 
   return (
-    <div className="flex mt-18.75 min-h-[calc(100vh-75px)] justify-center items-start w-full">
+    <div className="relative flex min-h-[calc(100vh-75px)] justify-center items-start w-full">
       <div className="absolute top-0 left-10 uppercase text-sm">
         <p className="font-bold mb-1">a.i. analysis</p>
         <p>
