@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import CameraGuard from "@/components/camera/CameraGuard";
 import CameraCapture from "@/components/camera/CameraCapture";
@@ -26,6 +26,10 @@ export default function CameraPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
+  const handleError = useCallback((msg: string) => {
+  setError(msg);
+}, []);
+
   useEffect(() => {
     if (!error) return;
 
@@ -38,7 +42,7 @@ export default function CameraPage() {
 
   return (
     <>
-      <CameraGuard onError={setError} />
+      <CameraGuard onError={handleError} />
 
       {error && <ErrorOverlay message={error} />}
 

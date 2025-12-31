@@ -39,8 +39,13 @@ const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 
     setPreviewSrc(reader.result);
     const base64String = reader.result.split(",")[1];
-    setHasUploaded(true);
-    await uploadImage(base64String);
+
+    try {
+      setHasUploaded(true);
+      await uploadImage(base64String);
+    } catch  {
+      setHasUploaded(false)
+    }
   };
 
   reader.readAsDataURL(file);

@@ -57,16 +57,23 @@ export default function CameraCapture({
     setCapturedImage(imageData); // store for preview
   };
 
-  const confirmCapture = async () => {
-    if (!capturedImage) return;
+const confirmCapture = async () => {
+  if (!capturedImage) return;
 
-    const base64String = capturedImage.split(",")[1]; // convert dataURL to base64
-    await uploadImage(base64String); // upload using hook
-    setCapturedImage(null); // reset preview if needed
-  };
+  const base64String = capturedImage.split(",")[1];
+
+  try {
+    await uploadImage(base64String);
+
+  } catch (err) {
+    console.error("Upload failed:", err);
+  }
+};
+
 
   const retakeCapture = () => {
-    setCapturedImage(null); // go back to video feed
+    setCapturedImage(null);
+    stopCamera();
     startCamera();
   };
 

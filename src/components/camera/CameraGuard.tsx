@@ -7,31 +7,26 @@ export default function CameraGuard({
   onError: (message: string) => void;
 }) {
   useEffect(() => {
-    const checkCamera = async () => {
-      if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.enumerateDevices
-      ) {
-        onError("Camera is not supported on this browser.");
-        return;
+  const checkCamera = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+      onError("Camera is not supported on this browser.");
+      return;
+    }
+
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasCamera = devices.some((d) => d.kind === "videoinput");
+
+      if (!hasCamera) {
+        onError("No camera was detected on this device.");
       }
+    } catch {
+      onError("Unable to detect camera availability.");
+    }
+  };
 
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasCamera = devices.some(
-          (d) => d.kind === "videoinput"
-        );
-
-        if (!hasCamera) {
-          onError("No camera was detected on this device.");
-        }
-      } catch {
-        onError("Unable to detect camera availability.");
-      }
-    };
-
-    checkCamera();
-  }, [onError]);
+  checkCamera();
+}, [onError]); // safe if parent wraps onError in useCallback
 
   return null;
 }
