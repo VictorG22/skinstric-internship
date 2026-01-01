@@ -17,7 +17,6 @@ export default function ResultsPage() {
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [hasUploaded, setHasUploaded] = useState<boolean>(false);
   const [showCameraPrompt, setShowCameraPrompt] = useState(false);
-  const [loadingCamera, setLoadingCamera] = useState(false);
   const router = useRouter();
 
   const { isLoading, error, uploadImage, validateFile } = useUploadImage();
@@ -93,7 +92,6 @@ export default function ResultsPage() {
                 >
                   <SiLens className="absolute top-1/2 left-1/2 w-[145%] h-[145%] object-cover -translate-x-1/2 -translate-y-1/2" />
                 </button>
-
               </div>
               {showCameraPrompt && (
                 <div className="absolute top-0 -left-30 md:left-full ml-2 w-80 bg-[#000000d0] pt-3 rounded shadow-lg z-50 text-white">
@@ -111,7 +109,8 @@ export default function ResultsPage() {
                     <button
                       onClick={() => {
                         setShowCameraPrompt(false);
-                        setLoadingCamera(true);
+
+                        router.push("/camera");
                       }}
                       className="text-white font-bold hover:text-gray-300 cursor-pointer"
                     >
