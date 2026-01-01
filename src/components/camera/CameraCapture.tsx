@@ -42,6 +42,24 @@ export default function CameraCapture({
     };
   }, [onError]);
 
+    const [yPosition, setYPosition] = useState<number | string>(40);
+
+  useEffect(() => {
+    const updateYPosition = () => {
+      if (window.innerWidth <= 768) { // breakpoint: md
+        setYPosition("50%"); // new yPosition on larger screens
+      } else {
+        setYPosition(40); // default yPosition on smaller screens
+      }
+    };
+
+    updateYPosition(); // set initial value
+    window.addEventListener("resize", updateYPosition);
+
+    return () => window.removeEventListener("resize", updateYPosition);
+  }, []);
+
+
   const captureFrame = () => {
     if (!videoRef.current || !canvasRef.current) return;
 
@@ -143,10 +161,10 @@ const confirmCapture = async () => {
 
       {/* Instructions overlay */}
       {!capturedImage && !isLoading && (
-        <div className="absolute flex flex-col w-125 gap-y-2 bottom-1/4 left-1/2 -translate-x-1/2 bg-[#0000004d] p-2 rounded-sm text-white text-center uppercase text-sm">
+        <div className="absolute flex flex-col w-[90%] sm:max-w-125 gap-y-2 bottom-1/6 md:bottom-1/4 left-1/2 -translate-x-1/2 bg-[#0000004d] p-2 rounded-sm text-white text-center uppercase text-sm">
           <h3>to get better results make sure to have</h3>
           <div className="flex justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center sm:gap-2">
               <div className="w-1.5 h-1.5 rotate-45 border border-white" />
               neutral expression
             </div>
@@ -198,7 +216,7 @@ const confirmCapture = async () => {
       )}
 
       { !isLoading &&
-        <BackButton prevLink="results" />
+        <BackButton prevLink="/results" yPosition={yPosition} xDirection="10" invert={true} color="white" />
       }
 
 

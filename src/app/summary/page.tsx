@@ -7,6 +7,8 @@ import Link from "next/link";
 import CircleProgress from "@/components/summary/CircleProgress";
 import SelectedConfidenceOption from "@/components/summary/SelectedConfidenceOption";
 import ConfidenceOption from "@/components/summary/ConfidenceOption";
+import BackButton from "@/components/UI/BackButton";
+import ForwardButton from "@/components/UI/ForwardButton";
 
 const getDefaultSelection = (data: Record<string, number>) => {
   const entries = Object.entries(data);
@@ -38,6 +40,8 @@ const sortCategoryEntries = (
 };
 
 export default function SummaryPage() {
+  const [circleSize, setCircleSize] = useState<number | string>(40);
+
   const { analysis } = useAnalysis();
 
   const categories: AnalysisCategory[] = analysis
@@ -57,7 +61,9 @@ export default function SummaryPage() {
   useEffect(() => {
     if (!analysis) return;
 
-    const initial: { [category: string]: { label: string; percentage: number } } = {};
+    const initial: {
+      [category: string]: { label: string; percentage: number };
+    } = {};
     for (const category of categories) {
       const highest = getDefaultSelection(analysis[category] ?? {});
       if (highest) initial[category] = highest;
@@ -66,7 +72,21 @@ export default function SummaryPage() {
     setSelectedOptions(initial);
   }, [analysis]);
 
-    if (!analysis || Object.keys(selectedOptions).length === 0) {
+  useEffect(() => {
+    const updateCircle = () => {
+      if (window.innerWidth >= 764) {
+        setCircleSize(400);
+      } else {
+        setCircleSize(200);
+      }
+    };
+
+    updateCircle();
+    window.addEventListener("resize", updateCircle);
+    return () => window.removeEventListener("resize", updateCircle);
+  }, []);
+
+  if (!analysis || Object.keys(selectedOptions).length === 0) {
     return <p>Loading...</p>;
   }
 
@@ -74,17 +94,17 @@ export default function SummaryPage() {
   const categoryData = analysis[activeCategory] ?? {};
 
   return (
-    <div className="relative w-full h-[calc(100vh-75px)]">
-      <div className="flex-1 mx-5 px-4 relative w-full max-h-full overflow-y-auto">
+    <div className="relative w-full h-[calc(100vh-75px)] pb-20">
+      <div className="flex-1 px-4 relative w-full max-h-full overflow-y-auto">
         <div className="mt-2 mb-15 flex flex-col justify-center gap-y-1 uppercase">
           <p className="font-bold">a.i. analysis</p>
-          <h1 className="font-semibold text-7xl">demographics</h1>
-          <p className="mt-1">predicted categories</p>
+          <h1 className="font-semibold text-4xl md:text-7xl">demographics</h1>
+          <p className="mt-1">predicted race & age</p>
         </div>
 
         <div className="grid md:grid-cols-[1.5fr_8.5fr_3.15fr] gap-4">
           {/* Left category selectors */}
-          <div className="flex flex-col gap-y-2">
+          <div className="flex-1 flex flex-col gap-y-2">
             {categories.map((category) => {
               const selection = selectedOptions[category];
               return (
@@ -99,12 +119,14 @@ export default function SummaryPage() {
                 >
                   {selection ? (
                     <>
-                      <p className="capitalize font-bold">{selection.label}</p>
+                      <p className="capitalize font-bold mb-5 md:mb-10">{selection.label}</p>
                       <p className="font-bold text-lg uppercase">{category}</p>
                     </>
                   ) : (
                     <>
-                      <p className="capitalize text-lg font-bold">No Selection</p>
+                      <p className="capitalize text-lg font-bold">
+                        No Selection
+                      </p>
                       <p className="font-bold text-xl uppercase">{category}</p>
                     </>
                   )}
@@ -114,15 +136,17 @@ export default function SummaryPage() {
           </div>
 
           {/* Middle panel */}
-          <div className="flex gap-4 max-lg:flex-col bg-gray-100 border-t border-black p-4 justify-between items-start">
-            <h2 className="text-4xl capitalize">
+          <div className="flex gap-4  md:min-h-125 md:h-[57vh] max-md:flex-col bg-gray-100 border-t border-black p-4 items-center  md:justify-between md:items-start">
+            <h2 className="text-4xl hidden md:block capitalize">
               {currentSelection?.label ?? `Select ${activeCategory}`}
             </h2>
             <CircleProgress
               percentage={currentSelection?.percentage ?? 0}
-              size={400}
-              strokeWidth={4}
+              strokeWidth={2}
             />
+            <p className="text-sm text-gray-500 md:hidden">
+              If A.I. estimate is wrong, select the correct one.
+            </p>
           </div>
 
           {/* Right panel */}
@@ -160,22 +184,15 @@ export default function SummaryPage() {
               )}
           </div>
         </div>
+        <p className="w-full text-center text-sm text-gray-400 hidden md:block mt-10">
+          If A.I. estimate is wrong, select the correct one.
+        </p>
 
         {/* Back button */}
-        <Link
-          href="/select"
-          className="my-4 group flex gap-4 items-center z-20 cursor-pointer"
-        >
-          <Image
-            width={50}
-            height={50}
-            alt="left button"
-            src="/left-btn.png"
-            className="group-hover:scale-109 transition duration-200"
-          />
-          <p className="uppercase font-semibold">back</p>
-        </Link>
+
       </div>
+              <BackButton prevLink="/select" yPosition={20} xDirection="6" invert={false} color=""/>
+              <ForwardButton btnTxt="Home" nextLink="/" yPosition={40} animation=""/>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export function initHomeHoverAnimations() {
   const rightTL = gsap.timeline({ paused: true });
 
   const createLeftAnimation = () => {
-    const moveRight = window.innerWidth * 0.25;
+    const moveRight = window.innerWidth * 0.2;
 
     leftTL.clear(); // this remove old tweens from previous resizes
     leftTL
@@ -24,7 +24,7 @@ export function initHomeHoverAnimations() {
   };
 
   const createRightAnimation = () => {
-    const moveLeft = -window.innerWidth * 0.25;
+    const moveLeft = -window.innerWidth * 0.2;
 
     rightTL.clear(); // this remove old tweens from previous resizes
     rightTL
