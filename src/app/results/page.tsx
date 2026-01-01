@@ -94,12 +94,6 @@ export default function ResultsPage() {
                   <SiLens className="absolute top-1/2 left-1/2 w-[145%] h-[145%] object-cover -translate-x-1/2 -translate-y-1/2" />
                 </button>
 
-                {loadingCamera && (
-                  <div className="absolute top-1/2 left-full mt-2 flex items-center gap-2 text-sm text-gray-600">
-                    <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Loading Camera...</span>
-                  </div>
-                )}
               </div>
               {showCameraPrompt && (
                 <div className="absolute top-0 -left-30 md:left-full ml-2 w-80 bg-[#000000d0] pt-3 rounded shadow-lg z-50 text-white">
@@ -118,11 +112,6 @@ export default function ResultsPage() {
                       onClick={() => {
                         setShowCameraPrompt(false);
                         setLoadingCamera(true);
-
-                        setTimeout(() => {
-                          setLoadingCamera(false);
-                          router.push("/camera/capture");
-                        }, 2000);
                       }}
                       className="text-white font-bold hover:text-gray-300 cursor-pointer"
                     >
