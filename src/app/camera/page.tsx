@@ -1,18 +1,20 @@
 "use client";
 
 import BackgroundSquare from "@/components/UI/BackgroundSquare";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { SiLens } from "react-icons/si";
 
 export default function CameraSetupPage() {
-  //   const router = useRouter();
+    const router = useRouter();
 
-  //   useEffect(() => {
-  //     const timer = setTimeout(() => {
-  //       router.push("/camera/capture");
-  //     }, 1500); // 1.5 seconds loading
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        router.push("/camera/capture");
+      }, 1500); 
 
-  //     return () => clearTimeout(timer);
-  //   }, [router]);
+      return () => clearTimeout(timer);
+    }, [router]);
 
   return (
     <div className="min-h-[calc(100vh-150px)] mb-18.75 w-full flex items-center justify-center bg-white text-center">

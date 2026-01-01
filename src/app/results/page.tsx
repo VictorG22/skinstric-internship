@@ -2,7 +2,6 @@
 
 import { useUploadImage } from "../hooks/useUploadImage";
 import Image from "next/image";
-import Link from "next/link";
 import { ChangeEvent, useRef, useState } from "react";
 import { BsImageAlt } from "react-icons/bs";
 import { SiLens } from "react-icons/si";
@@ -88,7 +87,7 @@ export default function ResultsPage() {
               <div className="rounded-full border border-black bg-white p-2 hover:scale-109 transition duration-600 z-2 relative">
                 <button
                   onClick={() => setShowCameraPrompt(true)}
-                  className="relative overflow-hidden h-20 w-20 md:h-30 md:w-30 border-6 rounded-full border-black"
+                  className="cursor-pointer relative overflow-hidden h-20 w-20 md:h-30 md:w-30 border-6 rounded-full border-black"
                 >
                   <SiLens className="absolute top-1/2 left-1/2 w-[145%] h-[145%] object-cover -translate-x-1/2 -translate-y-1/2" />
                 </button>
