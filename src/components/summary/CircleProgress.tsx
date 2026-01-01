@@ -2,32 +2,32 @@ import { useEffect, useState } from "react";
 
 interface CircleProgressProps {
   percentage: number;
-  size?: number; 
   strokeWidth?: number;
 }
 
 export default function CircleProgress({
   percentage,
-  size = 120,
   strokeWidth = 12,
 }: CircleProgressProps) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-
-  // Animate the percentage change
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
+  // Animate percentage
   useEffect(() => {
-    // Smoothly animate from previous percentage to new one
-    const percentTransitionAnimation = setTimeout(() => setAnimatedPercentage(percentage), 50);
-    return () => clearTimeout(percentTransitionAnimation);
+    const timeout = setTimeout(() => setAnimatedPercentage(percentage), 50);
+    return () => clearTimeout(timeout);
   }, [percentage]);
 
+  const size = 120; // base size for calculations
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
   const offset = circumference - (animatedPercentage / 100) * circumference;
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size}>
+     <div className="relative max-w-100 aspect-square w-[50%] mt-auto">
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        className="w-full h-full"
+      >
 
         {/* Track */}
         <circle
@@ -56,7 +56,7 @@ export default function CircleProgress({
       </svg>
       <span
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xl font-semibold"
-        style={{ fontSize: size * 0.1 }}
+        style={{ fontSize: size * 0.3 }}
       >
         {animatedPercentage}%
       </span>

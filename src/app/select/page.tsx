@@ -1,19 +1,37 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
+import BackButton from "@/components/UI/BackButton";
+import ForwardButton from "@/components/UI/ForwardButton";
 
 export default function SelectPage() {
   const [active, setActive] = useState<
     null | "top" | "left" | "right" | "bottom"
   >(null);
 
+  const [gridSize, setGridSize] = useState({ columns: 120, rows: 120 });
+
+  useEffect(() => {
+    const updateGrid = () => {
+      if (window.innerWidth >= 768) {
+        setGridSize({ columns: 120, rows: 120 });
+      } else {
+        setGridSize({ columns: 90, rows: 90 });
+      }
+    };
+
+    updateGrid();
+    window.addEventListener("resize", updateGrid);
+    return () => window.removeEventListener("resize", updateGrid);
+  }, []);
+
   return (
     <div className="relative flex min-h-[calc(100vh-75px)] justify-center items-start w-full">
       <div className="absolute top-0 left-10 uppercase text-sm">
-        <p className="font-bold mb-1">a.i. analysis</p>
-        <p>
+        <p className="text-sm md:text-base font-bold mb-1">a.i. analysis</p>
+        <p className="text-sm md:text-base">
           a.i. has estimated the following.
           <br />
           fix estimated information if needed.
@@ -68,8 +86,8 @@ export default function SelectPage() {
           <div
             className="relative z-10 grid place-items-center overflow-visible"
             style={{
-              gridTemplateColumns: "repeat(3, 120px)",
-              gridTemplateRows: "repeat(3, 120px)",
+              gridTemplateColumns: `repeat(3, ${gridSize.columns}px)`,
+              gridTemplateRows: `repeat(3, ${gridSize.rows}px)`,
             }}
           >
             {/* Buttons */}
@@ -77,7 +95,7 @@ export default function SelectPage() {
               <button
                 onMouseEnter={() => setActive("top")}
                 onMouseLeave={() => setActive(null)}
-                className="w-40 h-40 bg-gray-200 rotate-45 flex items-center justify-center cursor-pointer transition duration-400 hover:scale-109 hover:bg-gray-300"
+                className="w-30 h-30 md:w-40 md:h-40 bg-gray-200 rotate-45 flex items-center justify-center cursor-pointer transition duration-400 hover:scale-109 hover:bg-gray-300"
               >
                 <span className="-rotate-45 uppercase font-semibold text-[18px]">
                   demographics
@@ -88,7 +106,7 @@ export default function SelectPage() {
               <button
                 onMouseEnter={() => setActive("left")}
                 onMouseLeave={() => setActive(null)}
-                className="w-40 h-40 bg-gray-100 rotate-45 flex items-center justify-center cursor-not-allowed transition duration-400 hover:bg-gray-300"
+                className="w-30 h-30 md:w-40 md:h-40 bg-gray-100 rotate-45 flex items-center justify-center cursor-not-allowed transition duration-400 hover:bg-gray-300"
               >
                 <span className="-rotate-45 uppercase font-semibold text-[18px]">
                   cosmetic concerns
@@ -99,7 +117,7 @@ export default function SelectPage() {
               <button
                 onMouseEnter={() => setActive("right")}
                 onMouseLeave={() => setActive(null)}
-                className="w-40 h-40 bg-gray-100 rotate-45 flex items-center justify-center cursor-not-allowed transition duration-400 hover:bg-gray-300"
+                className="w-30 h-30 md:w-40 md:h-40 bg-gray-100 rotate-45 flex items-center justify-center cursor-not-allowed transition duration-400 hover:bg-gray-300"
               >
                 <span className="-rotate-45 uppercase font-semibold text-[18px]">
                   skin type details
@@ -110,7 +128,7 @@ export default function SelectPage() {
               <button
                 onMouseEnter={() => setActive("bottom")}
                 onMouseLeave={() => setActive(null)}
-                className="w-40 h-40 bg-gray-100 rotate-45 flex items-center justify-center cursor-not-allowed transition duration-400 hover:bg-gray-300"
+                className="w-30 h-30 md:w-40 md:h-40 bg-gray-100 rotate-45 flex items-center justify-center cursor-not-allowed transition duration-400 hover:bg-gray-300"
               >
                 <span className="-rotate-45 uppercase font-semibold text-[18px]">
                   weather
@@ -119,32 +137,19 @@ export default function SelectPage() {
             </div>
           </div>
         </div>
-        <Link
-          href={"/results"}
-          className="absolute left-5 bottom-10 group flex gap-4 items-center z-20 cursor-pointer"
-        >
-          <Image
-            width={50}
-            height={50}
-            alt="back button"
-            src={"/left-btn.png"}
-            className="group-hover:scale-109 transition duration-200 "
-          />
-          <p className="uppercase font-semibold">back</p>
-        </Link>
-        <Link
-          href={"/summary"}
-          className="absolute right-5 bottom-10 group flex gap-4 items-center z-20 cursor-pointer"
-        >
-          <p className="uppercase font-semibold">get summary</p>
-          <Image
-            width={50}
-            height={50}
-            alt="back button"
-            src={"/right-btn.png"}
-            className="group-hover:scale-109 transition duration-200 "
-          />
-        </Link>
+        <BackButton
+          prevLink="/"
+          yPosition={40}
+          xDirection="10"
+          invert={false}
+          color=""
+        />
+        <ForwardButton
+          btnTxt="Sum"
+          nextLink="/summary"
+          yPosition={60}
+          animation=""
+        />
       </div>
     </div>
   );

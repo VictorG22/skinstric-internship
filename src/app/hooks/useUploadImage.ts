@@ -1,4 +1,6 @@
 
+'use client'
+
 import { useState } from "react";
 import { useAnalysis } from "@/context/AnalysisContext";
 import { useRouter } from "next/navigation";
