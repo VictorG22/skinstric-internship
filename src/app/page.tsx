@@ -37,7 +37,7 @@ export default function Home() {
         <div className="lg:absolute lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2">
           <h1
             id="home__title"
-            className="text-center tracking-tighter leading-none text-[50px] md:text-[60px] lg:text-[100px]"
+            className="text-center tracking-tighter leading-none text-[32px] wrap-break-word md:text-[64px] lg:text-[128px]"
           >
             Sophisticated
             <br />
