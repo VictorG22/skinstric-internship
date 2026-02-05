@@ -10,6 +10,7 @@ export default function CameraCapture({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [ready, setReady] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
 
@@ -18,6 +19,8 @@ export default function CameraCapture({
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      streamRef.current = stream;
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -27,10 +30,15 @@ export default function CameraCapture({
   };
 
   const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      (videoRef.current.srcObject as MediaStream)
-        .getTracks()
-        .forEach((t) => t.stop());
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop();
+      });
+      streamRef.current = null;
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
     }
   };
 
@@ -42,11 +50,12 @@ export default function CameraCapture({
     };
   }, [onError]);
 
-    const [yPosition, setYPosition] = useState<number | string>(40);
+  const [yPosition, setYPosition] = useState<number | string>(40);
 
   useEffect(() => {
     const updateYPosition = () => {
-      if (window.innerWidth <= 768) { // breakpoint: md
+      if (window.innerWidth <= 768) {
+        // breakpoint: md
         setYPosition("50%"); // new yPosition on larger screens
       } else {
         setYPosition(40); // default yPosition on smaller screens
@@ -58,7 +67,6 @@ export default function CameraCapture({
 
     return () => window.removeEventListener("resize", updateYPosition);
   }, []);
-
 
   const captureFrame = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -75,21 +83,42 @@ export default function CameraCapture({
     setCapturedImage(imageData); // store for preview
   };
 
-const confirmCapture = async () => {
-  if (!capturedImage) return;
+  const confirmCapture = async () => {
+    if (!capturedImage) return;
 
-  const base64String = capturedImage.split(",")[1];
+    stopCamera();
 
+    const base64String = capturedImage.split(",")[1];
     await uploadImage(base64String);
-
-};
-
+  };
 
   const retakeCapture = () => {
     setCapturedImage(null);
     stopCamera();
     startCamera();
   };
+
+  useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === "hidden") {
+      stopCamera();
+    }
+  };
+
+  const handlePopState = () => {
+    stopCamera();
+  };
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  window.addEventListener("popstate", handlePopState);
+
+  return () => {
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
+    window.removeEventListener("popstate", handlePopState);
+    stopCamera();
+  };
+}, []);
+
 
   return (
     <div className="relative flex-1 w-full overflow-hidden bg-black">
@@ -131,7 +160,7 @@ const confirmCapture = async () => {
       )}
 
       {/* Confirm / Retake buttons (only when an image is captured) */}
-      {capturedImage && !isLoading &&  (
+      {capturedImage && !isLoading && (
         <>
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 uppercase text-center text-white bg-[#0000004d] px-2 rounded-lg">
             great shot!
@@ -183,29 +212,27 @@ const confirmCapture = async () => {
       {isLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-20">
           <div className="flex flex-col items-center gap-y-10 bg-[#FFFFFF99] px-20 py-10 rounded-lg">
-          <p className="text-gray-700 font-bold uppercase">
-            Analyzing Image
-          </p>
-          <div
-            className="flex items-center gap-2"
-            role="status"
-            aria-live="polite"
-            aria-label="Processing"
-          >
-            <span
-              className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
-              style={{ animationDelay: "0s" }}
+            <p className="text-gray-700 font-bold uppercase">Analyzing Image</p>
+            <div
+              className="flex items-center gap-2"
+              role="status"
+              aria-live="polite"
+              aria-label="Processing"
+            >
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0s" }}
               />
-            <span
-              className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
-              style={{ animationDelay: "0.12s" }}
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0.12s" }}
               />
-            <span
-              className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
-              style={{ animationDelay: "0.24s" }}
+              <span
+                className="w-4 h-4 bg-gray-500 rounded-full inline-block animate-loadingBounce"
+                style={{ animationDelay: "0.24s" }}
               />
+            </div>
           </div>
-              </div>
         </div>
       )}
 
@@ -215,10 +242,15 @@ const confirmCapture = async () => {
         </div>
       )}
 
-      { !isLoading &&
-        <BackButton prevLink="/results" yPosition={yPosition} xDirection="10" invert={true} color="white" />
-      }
-
+      {!isLoading && (
+        <BackButton
+          prevLink="/results"
+          yPosition={yPosition}
+          xDirection="10"
+          invert={true}
+          color="white"
+        />
+      )}
 
       <canvas ref={canvasRef} className="hidden" />
     </div>

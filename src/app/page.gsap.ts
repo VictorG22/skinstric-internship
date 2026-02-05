@@ -20,7 +20,7 @@ export function initHomeHoverAnimations() {
     leftTL
       .to(title, { x: moveRight, duration: 0.75, ease: "power3.inOut" }, 0)
       .to(rightContainer, { autoAlpha: 0, duration: 0.75, ease: "power3.out" }, 0)
-      .to(lines, { x: 100, duration: 1, ease: "power3.out", stagger: 0.05 }, 0);
+      .to(lines, { xPercent: 35, duration: 1, ease: "power3.out", stagger: 0.05 }, 0);
   };
 
   const createRightAnimation = () => {
@@ -30,7 +30,7 @@ export function initHomeHoverAnimations() {
     rightTL
       .to(title, { x: moveLeft, duration: 0.75, ease: "power3.inOut" }, 0)
       .to(leftContainer, { autoAlpha: 0, duration: 0.75, ease: "power3.out" }, 0)
-      .to(lines, { x: -100, duration: 1, ease: "power3.out", stagger: 0.05 }, 0);
+      .to(lines, { xPercent: -35, duration: 1, ease: "power3.out", stagger: 0.05 }, 0);
   };
 
   // Hover left

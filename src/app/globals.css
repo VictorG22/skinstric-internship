@@ -72,3 +72,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
+
+#home__title span {
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
